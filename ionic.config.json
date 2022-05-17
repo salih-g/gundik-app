@@ -1,7 +1,7 @@
 {
-  "name": "app",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "vue"
+	"name": "gundik",
+	"integrations": {
+		"capacitor": {}
+	},
+	"type": "vue"
 }
