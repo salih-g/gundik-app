@@ -24,6 +24,8 @@
 		--second-background-color: #323232;
 		--main-button-color: #ff9999;
 		--main-button-hover-color: #da8686;
+		--ion-background-color: var(--main-background-color);
+		--ion-text-color: var(var(--main-text-color));
 	}
 
 	body {

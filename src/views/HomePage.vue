@@ -1,6 +1,6 @@
 <template>
-	<ion-page>
-		<ion-content :fullscreen="true">
+	<ion-page class="page">
+		<ion-content :fullscreen="true" :key="componentKey">
 			<div id="container">
 				<!-- Player -->
 				<vue-plyr ref="plyr">
@@ -69,8 +69,8 @@
 	import { io } from 'socket.io-client';
 	import api from '../api';
 
-	const url = 'http://localhost:8081';
-	// const url = 'https://gundik.herokuapp.com';
+	// const url = 'http://localhost:8081';
+	const url = 'https://gundik.herokuapp.com';
 
 	const socket = io(url, {
 		transports: ['websocket'],
@@ -92,6 +92,7 @@
 					videoUrl: '',
 				},
 				list: [],
+				componentKey: 0,
 			};
 		},
 
@@ -103,8 +104,6 @@
 			this.player = this.$refs.plyr.player;
 
 			// Emmits
-			this.player.on('ready', () => console.log('ready'));
-
 			this.player.on('play', () => {
 				socket.emit('play');
 			});
@@ -124,7 +123,7 @@
 
 			socket.on('watchId', (watchId) => {
 				this.watchId = watchId;
-				this.$forceUpdate();
+				this.forceRerender();
 			});
 
 			socket.on('connect_error', (err) => {
@@ -153,16 +152,23 @@
 				this.content.title = '';
 				this.content.videoUrl = '';
 				this.list = await api.getContents();
+				this.forceRerender();
 			},
+
 			async deleteHandler(id) {
 				api.deleteContent(id);
 				this.list = await api.getContents();
+				this.forceRerender();
 			},
 
 			handleVideoChange(watchId) {
 				socket.emit('video_change', watchId);
 				this.watchId = watchId;
-				this.$forceUpdate();
+				this.forceRerender();
+			},
+			forceRerender() {
+				this.componentKey += 1;
+				this.player = this.$refs.plyr.player;
 			},
 		},
 	};
@@ -174,6 +180,7 @@
 		margin: 0 auto;
 		margin-top: 50px;
 		margin-bottom: 50px;
+		color: var(--main-text-color);
 	}
 	.list {
 		width: 70%;
