@@ -1,43 +1,44 @@
 <template>
 	<ion-page>
 		<ion-content :fullscreen="true">
-			<ion-header collapse="condense">
-				<ion-toolbar>
-					<ion-title size="large">Blank</ion-title>
-				</ion-toolbar>
-			</ion-header>
-
-			<div id="container">
-				<youtube-iframe
-					video-id="b69tTn-8p20"
-					playerWidth="100%"
-					playerHeight="500"
-				></youtube-iframe>
-			</div>
+			<div id="container"></div>
 		</ion-content>
 	</ion-page>
 </template>
 
 <script lang="ts">
-	import {
-		IonContent,
-		IonHeader,
-		IonPage,
-		IonTitle,
-		IonToolbar,
-	} from '@ionic/vue';
-	import { defineComponent } from 'vue';
+	import { IonContent, IonPage } from '@ionic/vue';
+	import { io } from 'socket.io-client';
 
-	export default defineComponent({
+	const socket = io('http://localhost:8081');
+
+	socket.on('connect', () => {
+		console.log('connected');
+	});
+
+	export default {
 		name: 'HomePage',
 		components: {
 			IonContent,
-			IonHeader,
 			IonPage,
-			IonTitle,
-			IonToolbar,
 		},
-	});
+		data() {
+			return {
+				player: null,
+			};
+		},
+		// mounted() {},
+
+		methods: {
+			// handleState(e) {},
+			playing() {
+				socket.emit('play');
+			},
+			paused() {
+				socket.emit('pause');
+			},
+		},
+	};
 </script>
 
 <style scoped></style>
