@@ -1,7 +1,14 @@
 <template>
 	<ion-page>
 		<ion-content :fullscreen="true">
-			<div id="container"></div>
+			<div id="container">
+				<vue-plyr ref="plyr">
+					<div
+						data-plyr-provider="youtube"
+						data-plyr-embed-id="bTqVqk7FSmY"
+					></div>
+				</vue-plyr>
+			</div>
 		</ion-content>
 	</ion-page>
 </template>
@@ -27,10 +34,13 @@
 				player: null,
 			};
 		},
-		// mounted() {},
+		mounted() {
+			this.$refs.plyr.player.on('ready', () => console.log('ready'));
+			this.$refs.plyr.player.on('play', () => console.log('play'));
+			this.$refs.plyr.player.on('pause', () => console.log('pause'));
+		},
 
 		methods: {
-			// handleState(e) {},
 			playing() {
 				socket.emit('play');
 			},
@@ -41,4 +51,4 @@
 	};
 </script>
 
-<style scoped></style>
+<style></style>

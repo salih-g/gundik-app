@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import VuePlyr from 'vue-plyr';
 
 import App from './App.vue';
 import router from './router';
@@ -23,8 +24,11 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import 'vue-plyr/dist/vue-plyr.css';
 
-const app = createApp(App).use(IonicVue).use(router);
+const app = createApp(App).use(IonicVue).use(router).use(VuePlyr, {
+	plyr: {},
+});
 
 router.isReady().then(() => {
 	app.mount('#app');
