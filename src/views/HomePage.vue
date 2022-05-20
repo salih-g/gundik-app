@@ -35,7 +35,7 @@
 				<!-- List -->
 				<div class="list">
 					<div class="list-group mb-5">
-						<div class="card mb-5" v-for="(element, key) in list" :key="key">
+						<div class="card mb-5" v-for="element in list" :key="element._id">
 							<img
 								class="card-img-top click"
 								:src="`https://img.youtube.com/vi/${element.watchId}/maxresdefault.jpg`"
@@ -64,7 +64,10 @@
 	</ion-page>
 </template>
 
-<script lang="ts">
+<script>
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-nocheck
+
 	import { IonContent, IonPage } from '@ionic/vue';
 	import { io } from 'socket.io-client';
 	import api from '../api';
@@ -85,7 +88,6 @@
 		data() {
 			return {
 				moveTo: Number,
-				player: null,
 				watchId: '5qap5aO4i9A',
 				content: {
 					title: '',
@@ -100,10 +102,15 @@
 			this.list = await api.getContents();
 		},
 
-		mounted() {
-			this.player = this.$refs.plyr.player;
+		computed: {
+			player() {
+				return this.$refs.plyr.player;
+			},
+		},
 
+		mounted() {
 			// Emmits
+
 			this.player.on('play', () => {
 				socket.emit('play');
 			});
@@ -123,7 +130,15 @@
 
 			socket.on('watchId', (watchId) => {
 				this.watchId = watchId;
-				this.forceRerender();
+				this.player.source = {
+					type: 'video',
+					sources: [
+						{
+							src: watchId,
+							provider: 'youtube',
+						},
+					],
+				};
 			});
 
 			socket.on('connect_error', (err) => {
@@ -152,23 +167,25 @@
 				this.content.title = '';
 				this.content.videoUrl = '';
 				this.list = await api.getContents();
-				this.forceRerender();
 			},
 
 			async deleteHandler(id) {
 				api.deleteContent(id);
 				this.list = await api.getContents();
-				this.forceRerender();
 			},
 
 			handleVideoChange(watchId) {
 				socket.emit('video_change', watchId);
 				this.watchId = watchId;
-				this.forceRerender();
-			},
-			forceRerender() {
-				this.componentKey += 1;
-				this.player = this.$refs.plyr.player;
+				this.player.source = {
+					type: 'video',
+					sources: [
+						{
+							src: watchId,
+							provider: 'youtube',
+						},
+					],
+				};
 			},
 		},
 	};
